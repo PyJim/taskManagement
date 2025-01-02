@@ -16,11 +16,9 @@ export const Signup = () => {
     e.preventDefault();
     setError('');
   
-    // Conditionally set the role to 'admin' or 'user' based on the isAdmin variable
-    const userRole = isAdmin ? 'admin' : 'user';
-  
+    // Conditionally set the role to 'admin' or 'user' based on the isAdmin variable  
     try {
-      const success = await signup(email, password, firstname, userRole);
+      const success = await signup(email, password, firstname, isAdmin);
   
       if (success) {
         navigate('/login');

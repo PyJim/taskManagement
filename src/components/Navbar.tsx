@@ -7,6 +7,8 @@ export const Navbar = () => {
   const location = useLocation();
   const { logout, user } = useAuthStore();
 
+  const isAdmin = user?.groups?.includes('Admins') || false;
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -17,7 +19,7 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-8">
-            <span className="text-lg font-semibold">Welcome, {user?.email}</span>
+            <span className="text-lg font-semibold">Welcome, {user?.firstname || user?.email}</span>
             <div className="flex items-center space-x-6">
               <Link
                 to="/dashboard"
@@ -30,11 +32,11 @@ export const Navbar = () => {
                 <LayoutDashboard size={18} className="mr-2" />
                 Dashboard
               </Link>
-              {user?.role==='admin' && (
+              {isAdmin && (
                 <Link
-                  to="/users"
+                  to="/team"
                   className={`flex items-center ${
-                    location.pathname === '/users'
+                    location.pathname === '/team'
                       ? 'text-blue-600'
                       : 'text-gray-700 hover:text-gray-900'
                   }`}

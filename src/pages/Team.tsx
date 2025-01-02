@@ -2,12 +2,25 @@ import { useEffect, useState } from 'react';
 import { Navbar } from '../components/Navbar';
 import { UsersList } from '../components/UsersList';
 import { User } from '../types/index';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 
-export const Users = () => {
+export const Team = () => {
+  const user = useAuthStore((state) => state.user);
+  const accessToken = useAuthStore((state) => state.accessToken);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [users, setUsers] = useState<User[]>([]);
 
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!(user && accessToken)) {
+      navigate('/login', { replace: true });
+    }
+  }, [user, navigate]);
+
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {

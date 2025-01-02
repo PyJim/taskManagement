@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
 import { Dashboard } from './pages/Dashboard';
-import { Users } from './pages/Users';
+import { Team } from './pages/Team';
 import { AuthGuard } from './components/AuthGuard';
 
 function App() {
@@ -20,10 +20,10 @@ function App() {
           }
         />
         <Route
-          path="/users"
+          path="/team"
           element={
             <AuthGuard>
-              <Users />
+              <Team />
             </AuthGuard>
           }
         />

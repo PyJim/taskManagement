@@ -10,7 +10,7 @@ interface TaskCardProps {
 }
 
 export const TaskCard = ({ task, onEdit, onDelete, onStatusChange }: TaskCardProps) => {
-  const isAdmin = useAuthStore((state) => state.user?.role === 'admin');
+  const isAdmin = useAuthStore((state) => state.user?.groups?.includes('Admins') || false);
 
   // Parse the date and ensure it's handled correctly
   const formattedDate = new Date(task.deadline).toLocaleDateString('en-US', {
@@ -52,9 +52,12 @@ export const TaskCard = ({ task, onEdit, onDelete, onStatusChange }: TaskCardPro
           <option value="in-progress">In Progress</option>
           <option value="completed">Completed</option>
         </select>
-        <span className="text-sm text-gray-500">
+        <span
+            className={`text-sm ${new Date(formattedDate) < new Date() ? 'text-red-500' : 'text-gray-500'}`}
+          >
           {formattedDate}
         </span>
+
       </div>
     </div>
   );

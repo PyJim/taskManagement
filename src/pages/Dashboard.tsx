@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 
 export const Dashboard = () => {
   const user = useAuthStore((state) => state.user);
+  const accessToken = useAuthStore((state) => state.accessToken);
+
   const { tasks, addTask, updateTask, deleteTask, getUserTasks, filterTasks } = useTaskStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -30,18 +32,18 @@ export const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    if (!(user && accessToken)) {
       navigate('/login', { replace: true });
     }
   }, [user, navigate]);
 
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.groups?.includes('Admins') || false;
 
   // Fetch tasks when component mounts and user is present
   useEffect(() => {
     if (user) {
       setLoading(true); // Set loading to true when tasks are being fetched
-      getUserTasks(user?.user_id || '', isAdmin).finally(() => setLoading(false)); // Set loading to false when done
+      getUserTasks(user?.username || '', isAdmin).finally(() => setLoading(false)); // Set loading to false when done
     }
   }, [user, isAdmin, getUserTasks]);
 
@@ -91,7 +93,7 @@ export const Dashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Task Dashboard</h1>
-          {user?.role === 'admin' && (
+          {isAdmin && (
             <button
               onClick={() => setIsModalOpen(true)}
               className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
@@ -124,8 +126,8 @@ export const Dashboard = () => {
                 <TaskCard
                   key={task.task_id}
                   task={task}
-                  onEdit={user?.role === 'admin' ? handleEdit : undefined}
-                  onDelete={user?.role === 'admin' ? deleteTask : undefined}
+                  onEdit={isAdmin ? handleEdit : undefined}
+                  onDelete={isAdmin ? deleteTask : undefined}
                   onStatusChange={(id, status) => updateTask(id, { status })}
                 />
               );

@@ -4,13 +4,15 @@ import Cookies from 'js-cookie';
 
 interface AuthState {
   user: User | null;
+  accessToken: string | null;
   login: (email: string, password: string) => Promise<boolean>;
-  signup: (email: string, password: string, firstname: string, role: string) => Promise<boolean>;
+  signup: (email: string, password: string, firstname: string, isAdmin: boolean) => Promise<boolean>;
   logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
+  user: Cookies.get('user') ? JSON.parse(Cookies.get('user') as string) : null,
+  accessToken: Cookies.get('accessToken') || null,
 
   login: async (email, password) => {
     try {
@@ -27,15 +29,20 @@ export const useAuthStore = create<AuthState>((set) => ({
         throw new Error('Invalid credentials or server error');
       }
 
-      const { access_token, user } = await response.json();
+      const { accessToken, user } = await response.json();
 
       // Store the access token in cookies
-      Cookies.set('access_token', access_token, {
+      Cookies.set('accessToken', accessToken, {
         expires: 7, // 7 days
         secure: true,
         sameSite: 'strict',
       });
-
+    
+      Cookies.set('user', JSON.stringify(user), {
+        expires: 7, // 7 days
+        secure: true,
+        sameSite: 'strict',
+      });
       // Update user state
       set({ user });
       return true;
@@ -45,14 +52,14 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  signup: async (email, password, firstname, role) => {
+  signup: async (email, password, firstname, isAdmin) => {
     try {
       const response = await fetch(
         'https://y97kbmz70d.execute-api.eu-west-1.amazonaws.com/dev/users/register',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email:email, password:password, firstname:firstname, role:role }),
+          body: JSON.stringify({ email:email, password:password, firstname:firstname, isAdmin:isAdmin }),
         }
       );
 
@@ -69,7 +76,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: () => {
     // Remove the token from cookies and reset user state
-    Cookies.remove('access_token');
+    Cookies.remove('accessToken');
+    Cookies.remove('user');
     set({ user: null });
   },
 }));
