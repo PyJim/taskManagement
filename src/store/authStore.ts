@@ -29,10 +29,10 @@ export const useAuthStore = create<AuthState>((set) => ({
         throw new Error('Invalid credentials or server error');
       }
 
-      const { accessToken, user } = await response.json();
+      const { idToken, user } = await response.json();
 
       // Store the access token in cookies
-      Cookies.set('accessToken', accessToken, {
+      Cookies.set('accessToken', idToken, {
         expires: 7, // 7 days
         secure: true,
         sameSite: 'strict',
