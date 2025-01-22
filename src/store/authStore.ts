@@ -5,8 +5,8 @@ import Cookies from 'js-cookie';
 interface AuthState {
   user: User | null;
   accessToken: string | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  signup: (email: string, password: string, firstname: string, isAdmin: boolean) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<string>;
+  signup: (email: string, password: string, firstname: string, isAdmin: boolean) => Promise<string>;
   logout: () => void;
 }
 
@@ -30,6 +30,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       }
 
       const { idToken, user } = await response.json();
+      // console.log(user);
+      // console.log(idToken);
 
       // Store the access token in cookies
       Cookies.set('accessToken', idToken, {
@@ -45,10 +47,10 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
       // Update user state
       set({ user });
-      return true;
-    } catch (error) {
-      console.error('Login error:', error);
-      return false;
+      return response;
+    } catch (error: any) {
+      // console.error('Login error:', error);
+      return error.message;
     }
   },
 
@@ -63,14 +65,10 @@ export const useAuthStore = create<AuthState>((set) => ({
         }
       );
 
-      if (!response.ok) {
-        throw new Error('Signup failed');
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Signup error:', error);
-      return false;
+      return response;
+    } catch (error: any) {
+      // console.error('Signup error:', error);
+      return error.message;
     }
   },
 

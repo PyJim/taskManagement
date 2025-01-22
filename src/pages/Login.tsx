@@ -14,11 +14,12 @@ export const Login = () => {
     e.preventDefault();
     setError(''); // Clear previous errors
 
-    const success = await login(email, password);
-    if (success) {
+    const response: any = await login(email, password);
+    // console.log(response);
+    if (response.ok) {
       navigate('/dashboard'); // Navigate to the dashboard on successful login
     } else {
-      setError('Invalid email or password. Please try again.');
+      setError('Invalid credentials or unverified mail. Please check your mail to verify your account if you have not.');
     }
   };
 

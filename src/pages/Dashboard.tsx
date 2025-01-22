@@ -32,6 +32,7 @@ export const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+
     if (!(user && accessToken)) {
       navigate('/login', { replace: true });
     }

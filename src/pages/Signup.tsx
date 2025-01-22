@@ -18,16 +18,16 @@ export const Signup = () => {
   
     // Conditionally set the role to 'admin' or 'user' based on the isAdmin variable  
     try {
-      const success = await signup(email, password, firstname, isAdmin);
-  
-      if (success) {
+      const response: any = await signup(email, password, firstname, isAdmin);
+      
+      // console.log(response.error);
+      if (response.ok) {
         navigate('/login');
       } else {
-        setError('Email already exists');
+        setError("Error signing up. Check credentials. Password must be strong");
       }
-    } catch (err) {
-      setError('Signup failed. Please try again.');
-      console.error(err);
+    } catch (err: any) {
+      setError(err.message);
     }
   };
   

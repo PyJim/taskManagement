@@ -99,7 +99,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
       const updatedTask = await api.updateTask(id, updates);
-      console.log(updatedTask.task);
+      // console.log(updatedTask.task);
       set((state) => ({
         tasks: state.tasks.map((task) =>
           task.task_id === id ? updatedTask.task : task
